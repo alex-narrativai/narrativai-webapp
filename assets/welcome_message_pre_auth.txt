@@ -1,0 +1,4 @@
+We're glad you're here. This is a prototype and intended to show the full functionality of the NarrativAI system. All client, contact, and company details are fictional.
+
+## Whats happening here?
+NarrativAI ingests communications transcripts, key metrics and company documentation, and creates an easy interface to answer the important questions about your business. It is powered by multiple NLP and LLM models in order to supply rapid, accurate, and up-to-date summaries at multiple levels of detail, from individual client or contact level up to quarterly and even annual business reviews.

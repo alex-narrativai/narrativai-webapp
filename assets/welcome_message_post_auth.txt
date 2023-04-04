@@ -1,0 +1,21 @@
+
+## What should you do first?
+Start clicking on stuff in the sidebar!
+
+The search function in the sidebar will return relevant results from the company records and answer any business questions you might have (powered by GPT). The tabs are a more guided walk through company data. Hover over any linked contacts or clients for a quick glance at status, stages, and roles.
+
+## Want a more guided introduction?
+**Take the Executive Challenge!** I'll bet you a pint that within 15 minutes you know more about the current state of this fictional business than your own!
+
+Here is the scenario:
+- You are the new CEO of NarrativAI and you need to get up to speed with the business.
+- Start with the [Executive Intelligence](http://localhost:8501/Executive_Intelligence) tab (left sidebar) and browse a few recent weekly, monthly, and quarterly business reviews.
+- Check out how sales are going on the [Sales Intelligence](http://localhost:8501/Sales_Intelligence) tab - you'll find prospective client summaries, contact histories, key account updates, sentiment analysis and more.
+- Understand the current client mix and sentiment on the [Customer Success](http://localhost:8501/Customer_Success) tab. Check out what your current clients are up to at a glance.
+
+## :red[COMING SOON:]
+- The [Product Insights](http://localhost:8501/Product_Intelligence) tab will show you the latest product updates, feature requests, and bug reports.
+- [Team Analytics](http://localhost:8501/Company_Updates) tab will show you the latest company news, employee updates, and team performance.
+- Get a visual of the key metrics of your business on the [Metrics](http://localhost:8501/Metrics) tab. This will feel familiar - it is the same endless graphs you normally look at and then go ask your sales/success/revops team to explain. The difference? It all links back to the other tabs so you can get that context right away.
+
+How'd it go? Anything missing? Let the developer know at [alex@narrativai.com](alex@narrativai.com)
