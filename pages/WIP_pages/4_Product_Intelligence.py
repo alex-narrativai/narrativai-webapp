@@ -1,6 +1,6 @@
 import streamlit as st
 
-import st_utils
+import components.st_utils as st_utils
 import nai_utils as nut
 from dfm import DataFrameManager
 

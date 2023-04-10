@@ -23,17 +23,12 @@ class DataFrameManager:
         self.interactions = pd.read_sql(text("select * from interactions"), conn)
 
         self.employees = pd.read_sql(text("select * from employees"), conn)
-        self.interactions_contacts = pd.read_sql(
-            text("select * from interactions_contacts"), conn
-        )
-        self.interactions_employees = pd.read_sql(
-            text("select * from interactions_employees"), conn
+        self.interaction_participant = pd.read_sql(
+            text("select * from interaction_participants"), conn
         )
         self.financials = pd.read_sql(text("select * from financials"), conn)
         self.documents = pd.read_sql(text("select * from documents"), conn)
-        self.weekly = pd.read_sql(text("select * from weekly"), conn)
-        self.monthly = pd.read_sql(text("select * from monthly"), conn)
-        self.key_accounts = pd.read_sql(text("select * from key_accounts"), conn)
+        self.exec_summaries = pd.read_sql(text("select * from exec_summaries"), conn)
 
         # Financials table pre-processing
         self.financials["date"] = pd.to_datetime(self.financials["date"])
@@ -43,9 +38,7 @@ class DataFrameManager:
         )
         self.financials = self.financials.set_index("date")
         self.financials["date"] = self.financials["bk-date"]
-        self.financials['total_customers'] = self.financials['customers']
-        self.financials['total_mrr'] = self.financials['mrr']
-        self.financials.drop(["bk-date",'mrr', 'customers'], axis=1, inplace=True)
+        self.financials.drop(["bk-date"], axis=1, inplace=True)
 
         self.financials = convert_column_names(self.financials)
 
@@ -54,13 +47,9 @@ class DataFrameManager:
             self.contacts,
             self.interactions,
             self.employees,
-            self.interactions_contacts,
-            self.interactions_employees,
             self.financials,
             self.documents,
-            self.weekly,
-            self.monthly,
-            self.key_accounts,
+            self.exec_summaries
         ]
 
         for df in self.dataframes:
@@ -106,18 +95,18 @@ class DataFrameManager:
         contact_id = uuid.UUID(contact_id) if type(contact_id) == str else contact_id
         return self.clients[
             self.clients.client_id == self.get_contact_client_id_from_id(contact_id)
-        ].name.iloc[0]
+        ].client_name.iloc[0]
 
     def get_contact_fact_by_id_and_fact_name(self, contact_id, fact_name):
         contact_id = uuid.UUID(contact_id) if type(contact_id) == str else contact_id
         return self.contacts[self.contacts.contact_id == contact_id][fact_name].iloc[0]
 
     def get_client_id_by_name(self, client_name):
-        return self.clients[self.clients.name == client_name].client_id.iloc[0]
+        return self.clients[self.clients.client_name == client_name].client_id.iloc[0]
 
     def get_client_name_by_id(self, client_id):
         client_id = uuid.UUID(client_id) if type(client_id) == str else client_id
-        return self.clients[self.clients.client_id == client_id].name.iloc[0]
+        return self.clients[self.clients.client_id == client_id].client_name.iloc[0]
 
     def get_client_fact_by_id_and_fact_name(self, client_id, fact_name):
         client_id = uuid.UUID(client_id) if type(client_id) == str else client_id

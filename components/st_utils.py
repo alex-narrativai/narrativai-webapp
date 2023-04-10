@@ -5,7 +5,8 @@ from urllib.parse import urlparse
 import streamlit as st
 from streamlit_javascript import st_javascript
 
-import nai_utils as nut
+import components.nai_utils as nut
+import components.gpt_utils as gpt_utils
 
 
 # --- USER AUTHENTICATION ---
@@ -103,12 +104,12 @@ def print_client_details(client, dfm):
     :param dfm: A DataFrameManager instance containing data from related tables.
     """
     # Display the client's name as an H2 heading
-    st.markdown(f"## {client.name.iloc[0]}")
+    st.markdown(f"## {client.client_name.iloc[0]}")
     # Display the client's account status and stage as an H4 heading
     st.markdown(f"#### {client.account_status.iloc[0]} | {client.stage.iloc[0]}")
 
     # Check if the client is a key account and display a message if true
-    if dfm.key_accounts.client_id.eq(client.client_id).any():
+    if client.key_account.iloc[0] == "True":
         st.markdown(f"## This is a Key Account")
 
     # Display the client's relationship summary as markdown, updating heading levels
@@ -127,8 +128,8 @@ def create_sidebar(qs_params, dfm):
     st.sidebar.write('-------')
     user_text = st.sidebar.text_input("What do you want to know more about today?", key="ei_search")
     
-    if 'query' in qs_params:
-        user_text = qs_params['query'][0]
+    # if 'query' in qs_params:
+    #     user_text = qs_params['query'][0]
     if user_text:
         sidebar_search(user_text, dfm, domain)
     else:
@@ -172,11 +173,11 @@ def print_side_bar_results(possibles, search_string, dfm, domain):
         for c in possibles["CLIENTS"]:
             #for c in client.itertuples():
                 link = nut.string_to_markdown_url(
-                    c.name,
+                    c.client_name,
                     page="Customer_Success",
                     query_params={
                         "client_uuid": c.client_id,
-                        "name": c.name,
+                        "name": c.client_name,
                         "stage": c.stage,
                         "status": c.account_status,
                         "query": search_string,
@@ -217,7 +218,7 @@ def print_side_bar_results(possibles, search_string, dfm, domain):
         st.sidebar.write("# Employees")
         for employee in possibles["EMPLOYEES"]:
             for e in employee.itertuples():
-                st.sidebar.write(employee.name)
+                st.sidebar.write(employee.client_name)
 
     if possibles["DATES"] != []:
         st.sidebar.write("# Executive Summaries")

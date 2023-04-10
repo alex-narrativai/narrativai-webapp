@@ -4,7 +4,7 @@ from datetime import datetime
 import streamlit as st
 import pandas as pd
 
-import st_utils
+import components.st_utils as st_utils
 import nai_utils as nut
 from dfm import DataFrameManager
 
@@ -19,7 +19,6 @@ if "dfm" not in st.session_state:
     st.session_state.dfm = dfm
 else:
     dfm = st.session_state.dfm
-
 
 
 # Sidebar

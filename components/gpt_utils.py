@@ -4,7 +4,8 @@ from datetime import datetime
 import openai
 import spacy
 
-import nai_utils as nut
+import components.nai_utils as nut
+
 
 OPENAI_API_KEY = os.getenv("OPENAI_KEY")
 openai.api_key = OPENAI_API_KEY

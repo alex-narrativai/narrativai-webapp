@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": true
+            },
+            "previewLimit": 50,
+            "server": "narrativai-demo.postgres.database.azure.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "narrativai-demo",
+            "database": "postgres",
+            "username": "nai_admin",
+            "password": "TZM.kuq!cap4kfa-quc"
+        }
+    ]
+}

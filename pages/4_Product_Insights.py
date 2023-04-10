@@ -1,8 +1,8 @@
 import streamlit as st
 
-import st_utils
-import nai_utils as nut
-import authenticate
+import components.st_utils as st_utils
+import components.nai_utils as nut
+import components.authenticate as authenticate
 
 st_utils.style_page()
 qs_params = st.experimental_get_query_params()

@@ -2,9 +2,9 @@ from datetime import datetime
 
 import streamlit as st
 
-import st_utils
-import nai_utils as nut
-import authenticate
+import components.st_utils as st_utils
+import components.nai_utils as nut
+import components.authenticate as authenticate
 
 st_utils.style_page()
 qs_params = st.experimental_get_query_params()
@@ -26,7 +26,7 @@ if True:
     earliest = datetime(2022,1,1)
 
     col1, col2 = st.columns(2)
-    clients = dfm.clients.name.to_list()
+    clients = dfm.clients.client_name.to_list()
     if passed_contact:
         
         clients = [dfm.get_contact_client_name_from_id(passed_contact)] + clients
@@ -34,11 +34,11 @@ if True:
         st.markdown('## 🏢 Client Details')
         client_name = st.selectbox('Select a client:', clients)
         if client_name != "":
-            st_utils.print_client_details(dfm.clients[dfm.clients.name == client_name],dfm)
+            st_utils.print_client_details(dfm.clients[dfm.clients.client_name == client_name],dfm)
 
     with col2:
         st.markdown('## 🧑‍🤝‍🧑 Contact Details')
-        contacts = dfm.contacts[dfm.contacts.client_id== dfm.clients[dfm.clients.name == client_name].client_id.iloc[0]].full_name.to_list()
+        contacts = dfm.contacts[dfm.contacts.client_id== dfm.clients[dfm.clients.client_name == client_name].client_id.iloc[0]].full_name.to_list()
         if passed_contact:
             contacts.remove(qs_params['name'][0])
             contacts.insert(0, qs_params['name'][0])

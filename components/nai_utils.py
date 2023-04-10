@@ -12,8 +12,8 @@ from streamlit_javascript import st_javascript
 
 from dotenv import load_dotenv
 
-from gpt_utils import *
-from dfm import DataFrameManager
+from components.gpt_utils import *
+from components.dfm import DataFrameManager
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ def check_auth(qs_params):
 
 @st.cache_data
 def get_dfm():
-    connection = nut.get_db_engine().connect()
+    connection = get_db_engine().connect()
     dfm = DataFrameManager(connection)
     connection.close()
     return dfm
@@ -72,7 +72,7 @@ def user_string_parser(user_string, dfm, domain):
         "GO_FISH": "",
     }
     for client in dfm.clients.itertuples():
-        for c in client.name.lower().split(" "):
+        for c in client.client_name.lower().split(" "):
             if c in user_string.lower().strip(string.punctuation):
                 print("FOUND A CLIENT IN REGULAR SEARCH: ", c)
                 possibles["CLIENTS"].append(client)
@@ -88,12 +88,12 @@ def user_string_parser(user_string, dfm, domain):
                 possibles["DATES"].append(res)
             else:
                 if (
-                    dfm.clients.name.str.contains(ent.text).any()
+                    dfm.clients.client_name.str.contains(ent.text).any()
                     and len(possibles["CLIENTS"]) == 0
                 ):
                     print("YEEHAW IT'S A CLIENT!")
                     possibles["CLIENTS"].append(
-                        [dfm.clients[dfm.clients.name.str.contains(ent.text)]]
+                        [dfm.clients[dfm.clients.client_name.str.contains(ent.text)]]
                     )
                 if dfm.contacts.full_name.str.contains(ent.text).any():
                     possibles["CONTACTS"].append(
@@ -105,9 +105,9 @@ def user_string_parser(user_string, dfm, domain):
                             ]
                         )
                     )
-                if dfm.employees.name.str.contains(ent.text).any():
+                if dfm.employees.full_name.str.contains(ent.text).any():
                     possibles["EMPLOYEES"].append(
-                        dfm.employees[dfm.employees.name == ent.text]
+                        dfm.employees[dfm.employees.full_name == ent.text]
                     )
     if (
         (len(possibles["CLIENTS"]) > 0)
@@ -175,14 +175,10 @@ def date_parser(date_string: str, dfm: object):
     """
     try:
         if date_string is not None:
-            if datetime.strptime(date_string, "%Y-%m-%d").day == 1:
-                return dfm.monthly[
-                    dfm.monthly.start_date == date_string
-                ].exec_summary.iloc[0]
-            else:
-                return dfm.weekly[
-                    dfm.weekly.start_date == date_string
-                ].exec_summary.iloc[0]
+            return dfm.exec_summaries[
+                dfm.exec_summaries.start_date == date_string
+            ].exec_summary.iloc[0]
+
         return "No executive summary found for the specified date."
     except IndexError as e:
         return "No executive summary found for the specified date."
@@ -234,7 +230,7 @@ def string_to_markdown_url(
     print(host)
     query_params["label"] = label
     query_string = urllib.parse.urlencode(query_params)
-    url = f"{host}/{page}?url_code = {URL_CODE}&{query_string}"
+    url = f"{host}/{page}?{query_string}"
 
     if target == "_blank":
         markdown_url = f"[{label}](/?test)"

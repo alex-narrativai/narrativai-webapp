@@ -4,9 +4,9 @@ from dateutil.relativedelta import relativedelta, MO
 
 import streamlit as st
 
-import st_utils
-import nai_utils as nut
-import authenticate
+import components.st_utils as st_utils
+import components.nai_utils as nut
+import components.authenticate as authenticate
 
 st_utils.style_page()
 qs_params = st.experimental_get_query_params()
@@ -27,61 +27,47 @@ if True:
     earliest = datetime(2022, 1, 1)
     latest = datetime.today() + relativedelta(weekday=MO(-2))
 
-    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        st.markdown("### Monthly")
-
-    with col4:
-        st.markdown("### Weekly")
-
-    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
-
-    with col1:
-        year_select = st.selectbox("Year", ["", 2022, 2023])
-        month_search = st.button("Search", key="month_search")
+        st.markdown("### Time Period")
+        period_select = st.selectbox("Period", ["Monthly", "Weekly"])
 
     with col2:
-        if year_select == "":
-            month_select = st.selectbox("Month", [""])
-        elif year_select == 2023:
-            month_select = st.selectbox(
-                "Month", list(calendar.month_name[: datetime.today().month + 1])
-            )
-        else:
-            month_select = st.selectbox("Month", list(calendar.month_name))
+        st.markdown("### Summary Selection")
+        if period_select == "Monthly":
+            summary_select = st.selectbox('Monthly Updates', options = dfm.exec_summaries[dfm.exec_summaries.period_length == "month"].sort_values(by='start_date').period)
+        elif period_select == "Weekly":
+            summary_select = st.selectbox('Weekly Updates', options = dfm.exec_summaries[dfm.exec_summaries.period_length == "week"].sort_values(by='start_date').period)
 
-    with col4:
-        week_select = st.date_input(
-            "Date", datetime.today() - timedelta(14), earliest, latest
-        )
-        week_search = st.button("Search", key="week_search")
+    get_exec_summary = st.button('Get Update')
 
-    passed_in_summary = (
-        nut.date_parser(qs_params["date"][0], dfm) if "date" in qs_params else None
-    )
+    if "date" in qs_params:
+        date_obj = datetime.strptime(qs_params["date"][0], '%Y-%m-%d')
 
-    if month_search:
-        if month_select and year_select:
-            st.markdown(
-                dfm.monthly.loc[
-                    (dfm.monthly.month_name == month_select)
-                    & (dfm.monthly.year == year_select)
-                ].exec_summary.iloc[0]
-            )
-            st.markdown("--------")
-        else:
-            st.markdown("## Select both month and year.")
+        url_select = date_obj.strftime('%B %Y')
+        print(url_select)
 
-    elif week_search:
-        lastMonday = week_select + relativedelta(weekday=MO(-1))
-        print(lastMonday)
-        st.markdown(
-            dfm.weekly[dfm.weekly.start_date == str(lastMonday)].exec_summary.iloc[0]
+
+
+    if get_exec_summary:
+        st.write(
+            dfm.exec_summaries.loc[
+                (dfm.exec_summaries.period == summary_select)
+            ].exec_summary.iloc[0]
         )
         st.markdown("--------")
 
-    elif passed_in_summary:
-        st.markdown(passed_in_summary)
+    if  "date" in qs_params and not get_exec_summary:
+        try:
+            st.write(
+                dfm.exec_summaries.loc[
+                    (dfm.exec_summaries.period == url_select)
+                ].exec_summary.iloc[0]
+            )
+        except IndexError as e:
+            st.write(f'Searching for {date_obj}:')
+            st.write("No summary for this period, please use the selectors above.")
+            
         st.markdown("--------")
 
 elif "NAI_no_group_assignedDEV" in st.session_state["user_cognito_groups"]:
